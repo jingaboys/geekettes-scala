@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# creating user. Default ist user=geekettes, pass=geekettes
+# can be changed by setting ENV Variables SFTP_USER, SFTP_PASS
+user="${SFTP_USER}"
+pass="${SFTP_PASS}"
+
+if [ -z "$pass" ]; then
+    pass="$(echo `</dev/urandom tr -dc A-Za-z0-9 | head -c256`)"
+    chpasswdOptions=""
+fi
+
+echo "$user:$pass" | chpasswd $chpasswdOptions
+
+# starting ssh (detached)
+exec /etc/init.d/ssh start &
+
+exec "$@"
